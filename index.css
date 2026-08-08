@@ -1,0 +1,1120 @@
+/* ==========================================================================
+   InkScript Studio - Handwritten Notes Generator Design System & Styles
+   ========================================================================== */
+
+:root {
+    /* UI Dark Mode Tokens */
+    --bg-dark-base: #0f172a;
+    --bg-dark-surface: #1e293b;
+    --bg-dark-card: #334155;
+    --bg-dark-hover: #475569;
+    
+    --accent-primary: #6366f1;
+    --accent-hover: #4f46e5;
+    --accent-glow: rgba(99, 102, 241, 0.35);
+
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --border-color: #334155;
+
+    /* Notebook Default Paper & Ink Variables (Overridden dynamically via JS) */
+    --paper-bg: #fafaf5;
+    --ink-body: #1a1a6b;
+    --ink-h1: #b30000;
+    --ink-h3: #006600;
+    --ink-hl: rgba(255, 255, 0, 0.4);
+    --handwriting-font: 'Kalam', cursive;
+    --font-size-base: 19px;
+    --line-height-base: 1.6;
+    --letter-spacing-base: 0px;
+    
+    --desk-bg: #475569;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-dark-base);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Header Navbar
+   ========================================================================== */
+
+.app-header {
+    height: 60px;
+    background-color: var(--bg-dark-surface);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.brand-text h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: #fff;
+}
+
+.brand-text .badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent-primary);
+    background: rgba(99, 102, 241, 0.15);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Buttons */
+.btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: #fff;
+    box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--bg-dark-card);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-dark-hover);
+    color: #fff;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px dashed var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.btn-outline:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 15px;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-icon:hover {
+    color: var(--text-main);
+    background-color: var(--bg-dark-card);
+}
+
+/* Dropdown Menu */
+.dropdown-export {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 220px;
+    background-color: var(--bg-dark-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 200;
+}
+
+.dropdown-menu.show {
+    display: flex;
+}
+
+.dropdown-menu a {
+    padding: 10px 12px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.15s ease;
+}
+
+.dropdown-menu a:hover {
+    background-color: var(--bg-dark-card);
+    color: #fff;
+}
+
+/* ==========================================================================
+   Workspace & Split Panels Layout
+   ========================================================================== */
+
+.app-workspace {
+    flex: 1;
+    display: flex;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+/* Left Sidebar Controls */
+.control-panel {
+    width: 420px;
+    background-color: var(--bg-dark-surface);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.control-panel.collapsed {
+    width: 0;
+    overflow: hidden;
+    border-right: none;
+}
+
+.panel-tabs {
+    display: flex;
+    background-color: var(--bg-dark-base);
+    border-bottom: 1px solid var(--border-color);
+    padding: 4px 4px 0 4px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
+
+.tab-btn i {
+    font-size: 15px;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+}
+
+.tab-btn.active {
+    background-color: var(--bg-dark-surface);
+    color: var(--accent-primary);
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+.tab-content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Scrollbar for Sidebar */
+.tab-content-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tab-content-wrapper::-webkit-scrollbar-thumb {
+    background-color: var(--bg-dark-card);
+    border-radius: 4px;
+}
+
+.tab-pane {
+    display: none;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.tab-pane.active {
+    display: flex;
+}
+
+.panel-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.panel-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-section h3 i {
+    color: var(--accent-primary);
+}
+
+.section-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.section-header-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ==========================================================================
+   Form Controls, Inputs, & Dropzone
+   ========================================================================== */
+
+.dropzone {
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 30px 20px;
+    text-align: center;
+    background-color: rgba(30, 41, 59, 0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.dropzone:hover, .dropzone.dragover {
+    border-color: var(--accent-primary);
+    background-color: rgba(99, 102, 241, 0.08);
+}
+
+.dropzone-icon {
+    font-size: 32px;
+    color: var(--accent-primary);
+}
+
+.dropzone h4 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.dropzone p {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.parsing-status {
+    padding: 12px;
+    background-color: rgba(99, 102, 241, 0.1);
+    border: 1px solid var(--accent-primary);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Templates Grid */
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.template-card {
+    background-color: var(--bg-dark-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.template-card i {
+    font-size: 20px;
+    color: var(--accent-primary);
+}
+
+.template-card span {
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.template-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+/* Editor Toolbar & Textarea */
+.editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background-color: var(--bg-dark-base);
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.tb-btn {
+    padding: 6px 10px;
+    background-color: var(--bg-dark-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-main);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tb-btn:hover {
+    background-color: var(--accent-primary);
+    color: #fff;
+    border-color: var(--accent-primary);
+}
+
+#raw-text-editor {
+    width: 100%;
+    height: 340px;
+    background-color: var(--bg-dark-base);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 14px;
+    color: #fff;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+#raw-text-editor:focus {
+    border-color: var(--accent-primary);
+}
+
+.editor-footer-info {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+/* Generic Controls */
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: var(--bg-dark-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 13px;
+    outline: none;
+}
+
+.form-control:focus {
+    border-color: var(--accent-primary);
+}
+
+.label-val-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.val-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-primary);
+    background: rgba(99, 102, 241, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Range Inputs */
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent-primary);
+}
+
+/* Toggle Switches */
+.switch-group {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toggle-switch {
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background-color: var(--bg-dark-card);
+    border-radius: 20px;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.toggle-switch:checked {
+    background-color: var(--accent-primary);
+}
+
+.toggle-switch::before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    background-color: #fff;
+    transition: transform 0.3s ease;
+}
+
+.toggle-switch:checked::before {
+    transform: translateX(20px);
+}
+
+/* Ink Preset Buttons */
+.ink-preset-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.ink-preset-btn {
+    background-color: var(--bg-dark-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-main);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ink-preset-btn .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.ink-preset-btn:hover, .ink-preset-btn.active {
+    border-color: var(--accent-primary);
+    background-color: rgba(99, 102, 241, 0.1);
+}
+
+/* Custom Color Pickers */
+.custom-ink-pickers {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.picker-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--bg-dark-card);
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.picker-item label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.picker-item input[type="color"] {
+    border: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: none;
+}
+
+/* Paper Grid Selectors */
+.paper-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.paper-card {
+    background-color: var(--bg-dark-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.paper-card input {
+    display: none;
+}
+
+.paper-thumb {
+    width: 100%;
+    height: 45px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+}
+
+.paper-thumb-ruled {
+    background-color: #fafaf5;
+    background-image: repeating-linear-gradient(transparent, transparent 9px, #91d1d3 9px, #91d1d3 10px);
+}
+
+.paper-thumb-grid {
+    background-color: #ffffff;
+    background-image: linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px);
+    background-size: 10px 10px;
+}
+
+.paper-thumb-dot {
+    background-color: #ffffff;
+    background-image: radial-gradient(#94a3b8 1px, transparent 1px);
+    background-size: 8px 8px;
+}
+
+.paper-thumb-parchment {
+    background-color: #f4ecd8;
+    background-image: radial-gradient(#e2d5b6 15%, transparent 16%);
+}
+
+.paper-thumb-legal {
+    background-color: #fffde7;
+    background-image: repeating-linear-gradient(transparent, transparent 9px, #90caf9 9px, #90caf9 10px);
+}
+
+.paper-thumb-blank {
+    background-color: #ffffff;
+}
+
+.paper-card span {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.paper-card.active {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* ==========================================================================
+   Right Panel: Notebook Canvas Preview & Viewport
+   ========================================================================== */
+
+.preview-panel {
+    flex: 1;
+    background-color: var(--desk-bg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.canvas-controls-bar {
+    height: 48px;
+    background-color: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 20;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.canvas-title-badge {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.canvas-zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--bg-dark-surface);
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.zoom-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+}
+
+.zoom-btn:hover {
+    color: #fff;
+    background-color: var(--bg-dark-card);
+}
+
+.zoom-val {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-primary);
+    min-width: 45px;
+    text-align: center;
+}
+
+/* Enabled Smooth Scroll Container */
+.notebook-viewport {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: scroll;
+    padding: 40px 20px 80px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    scroll-behavior: smooth;
+}
+
+/* Custom Styled Scrollbar for Preview Viewport */
+.notebook-viewport::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.notebook-viewport::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+.notebook-viewport::-webkit-scrollbar-thumb {
+    background: var(--bg-dark-card);
+    border-radius: 6px;
+    border: 2px solid var(--bg-dark-base);
+}
+
+.notebook-viewport::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+}
+
+.notebook-wrapper {
+    transition: transform 0.2s ease-out;
+    transform-origin: top center;
+    padding-bottom: 60px;
+}
+
+/* ==========================================================================
+   THE HANDWRITTEN NOTEBOOK PAGE ENGINE
+   ========================================================================== */
+
+:root {
+    --rule-height: calc(var(--font-size-base) * var(--line-height-base));
+    --line-offset-factor: 0.85;
+}
+
+.notebook-page {
+    font-family: var(--handwriting-font);
+    background-color: var(--paper-bg);
+    width: 850px;
+    min-height: 1150px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.35), 0 5px 15px rgba(0,0,0,0.2);
+    border-radius: 2px 8px 8px 2px;
+    position: relative;
+    padding: 50px 50px 60px 95px;
+    color: var(--ink-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    letter-spacing: var(--letter-spacing-base);
+    outline: none;
+    transition: font-family 0.2s ease, font-size 0.2s ease, line-height 0.2s ease;
+}
+
+/* Ink Bleed SVG filter application */
+.notebook-page.ink-bleed-active {
+    filter: url('#ink-bleed');
+}
+
+/* Paper Textures & Patterns - Dynamic Rule Height Matching */
+.notebook-page.paper-ruled {
+    background-image: repeating-linear-gradient(
+        transparent,
+        transparent calc(var(--rule-height) - 1.5px),
+        #91d1d3 calc(var(--rule-height) - 1.5px),
+        #91d1d3 var(--rule-height)
+    );
+    background-position: 0 calc(var(--rule-height) * var(--line-offset-factor));
+}
+
+.notebook-page.paper-grid {
+    background-image: linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px);
+    background-size: var(--rule-height) var(--rule-height);
+}
+
+.notebook-page.paper-dot {
+    background-image: radial-gradient(#94a3b8 1.5px, transparent 1.5px);
+    background-size: var(--rule-height) var(--rule-height);
+}
+
+.notebook-page.paper-parchment {
+    background-color: #f4ecd8;
+    background-image: repeating-linear-gradient(
+        transparent,
+        transparent calc(var(--rule-height) - 1.5px),
+        #cbbd9a calc(var(--rule-height) - 1.5px),
+        #cbbd9a var(--rule-height)
+    );
+    background-position: 0 calc(var(--rule-height) * var(--line-offset-factor));
+}
+
+.notebook-page.paper-legal {
+    background-color: #fffde7;
+    background-image: repeating-linear-gradient(
+        transparent,
+        transparent calc(var(--rule-height) - 1.5px),
+        #90caf9 calc(var(--rule-height) - 1.5px),
+        #90caf9 var(--rule-height)
+    );
+    background-position: 0 calc(var(--rule-height) * var(--line-offset-factor));
+}
+
+.notebook-page.paper-blank {
+    background-image: none;
+}
+
+/* Red Margin Line */
+.notebook-page.has-margin::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 75px;
+    width: 2px;
+    background-color: #ff8b8b;
+}
+
+/* Binder Holes */
+.notebook-page.binder-left-holes::after {
+    content: '';
+    position: absolute;
+    top: 50px;
+    left: 20px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--desk-bg);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4), 
+                0 950px 0 0 var(--desk-bg), inset 0 952px 5px rgba(0,0,0,0.4),
+                0 475px 0 0 var(--desk-bg), inset 0 477px 5px rgba(0,0,0,0.4);
+}
+
+.notebook-page.binder-top-holes::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 100px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--desk-bg);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4),
+                200px 0 0 0 var(--desk-bg), inset 202px 0 5px rgba(0,0,0,0.4),
+                400px 0 0 0 var(--desk-bg), inset 402px 0 5px rgba(0,0,0,0.4),
+                600px 0 0 0 var(--desk-bg), inset 602px 0 5px rgba(0,0,0,0.4);
+}
+
+/* Optional Coffee Stain Overlay */
+.coffee-stain {
+    position: absolute;
+    top: 60px;
+    right: 50px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 8px solid rgba(110, 65, 30, 0.15);
+    box-shadow: inset 0 0 15px rgba(110, 65, 30, 0.15);
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   Handwritten Note Elements (Headings, Boxes, Tables, Diagrams)
+   ========================================================================== */
+
+#notebook-content-target {
+    outline: none;
+}
+
+.notebook-page h1, .notebook-page h2, .notebook-page h3 {
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+    line-height: 1.25;
+}
+
+.notebook-page h1 {
+    color: var(--ink-h1);
+    font-size: 1.7em;
+    text-align: center;
+    margin-top: 0;
+    text-decoration: underline;
+    text-decoration-style: wavy;
+}
+
+.notebook-page h2 {
+    color: var(--ink-h1);
+    font-size: 1.35em;
+    border-bottom: 2px dashed var(--ink-h1);
+    display: inline-block;
+}
+
+.notebook-page h3 {
+    color: var(--ink-h3);
+    font-size: 1.15em;
+}
+
+.notebook-page p {
+    margin-bottom: 1em;
+}
+
+.notebook-page .highlight {
+    background-color: var(--ink-hl);
+    padding: 2px 6px;
+    border-radius: 5px;
+}
+
+/* Hand-drawn Callout & Formula Boxes */
+.notebook-page .box {
+    border: 2px solid var(--ink-body);
+    border-radius: 2px 255px 3px 25px / 255px 5px 225px 3px;
+    padding: 10px 20px;
+    display: inline-block;
+    background-color: rgba(255, 255, 255, 0.85);
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+.notebook-page .box-red {
+    border-color: var(--ink-h1);
+    color: var(--ink-h1);
+}
+
+.notebook-page .formula {
+    display: block;
+    text-align: center;
+    font-size: 1.2em;
+    margin: 20px 0;
+    padding: 12px;
+    border: 2px solid var(--ink-h3);
+    border-radius: 10px 255px 15px 25px / 255px 15px 225px 15px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--ink-h1);
+    font-weight: bold;
+}
+
+/* Hand-drawn Flow Diagrams */
+.notebook-page .diagram {
+    text-align: center;
+    margin: 25px 0;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.65);
+    border: 1px dashed #91d1d3;
+    border-radius: 10px;
+}
+
+.notebook-page .diagram-flow {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    margin: 15px 0;
+}
+
+.notebook-page .diagram-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+}
+
+.notebook-page .arrow-down::before {
+    content: '↓';
+    font-size: 24px;
+    font-weight: bold;
+    margin: 4px 0;
+    display: block;
+    text-align: center;
+}
+
+.notebook-page .arrow-up::before {
+    content: '↑';
+    font-size: 24px;
+    font-weight: bold;
+    margin: 4px 0;
+    display: block;
+    text-align: center;
+}
+
+/* Hand-drawn Tables */
+.notebook-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.notebook-page th, .notebook-page td {
+    border: 2px solid var(--ink-body);
+    border-radius: 2px 255px 3px 25px / 255px 5px 225px 3px;
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.notebook-page th {
+    background-color: rgba(145, 209, 211, 0.35);
+    font-weight: bold;
+    color: var(--ink-h3);
+}
+
+.notebook-page ul, .notebook-page ol {
+    margin-top: 6px;
+    padding-left: 28px;
+}
+
+.notebook-page li {
+    margin-bottom: 8px;
+}
+
+/* Jitter Span styling */
+.notebook-page .jitter-word {
+    display: inline-block;
+    transition: transform 0.1s ease;
+}
+
+/* ==========================================================================
+   Print Stylesheet
+   ========================================================================== */
+
+@media print {
+    body {
+        background-color: #fff !important;
+    }
+    .app-header, .control-panel, .canvas-controls-bar {
+        display: none !important;
+    }
+    .preview-panel {
+        background: transparent !important;
+    }
+    .notebook-viewport {
+        padding: 0 !important;
+    }
+    .notebook-wrapper {
+        transform: scale(1) !important;
+    }
+    .notebook-page {
+        box-shadow: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+    }
+}

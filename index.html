@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwritten Notes Studio | Turn Documents into Beautiful Handwritten Notes</title>
+    <meta name="description" content="Convert your Word, PDF, PowerPoint, and text files into authentic handwritten notes with customizable fonts, paper styles, live editing, and high-res export.">
+    
+    <!-- Google Fonts for Realistic Handwriting & UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400..700&family=Caveat+Brush&family=Gochi+Hand&family=Indie+Flower&family=Inknut+Antiqua:wght@400;600&family=Inter:wght@300;400;500;600;700&family=Kalam:wght@300;400;700&family=Outfit:wght@400;500;600;700&family=Patrick+Hand&family=Permanent+Marker&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Core Styling -->
+    <link rel="stylesheet" href="index.css">
+
+    <!-- CDN Libraries for File Parsing & Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="theme-dark">
+
+    <!-- SVG Filters for Ink Bleed & Hand-drawn Roughness -->
+    <svg style="display:none;">
+        <defs>
+            <filter id="ink-bleed">
+                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+            <filter id="paper-texture-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="4" result="noise"/>
+                <feDiffuseLighting in="noise" lighting-color="#fff" surfaceScale="1">
+                    <feDistantLight azimuth="45" elevation="60" />
+                </feDiffuseLighting>
+                <feBlend mode="multiply" in="SourceGraphic" in2="noise"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Top Application Bar -->
+    <header class="app-header">
+        <div class="brand">
+            <div class="logo-icon"><i class="fa-solid fa-pen-nib"></i></div>
+            <div class="brand-text">
+                <h1>InkScript Studio</h1>
+                <span class="badge">Document to Handwritten Converter</span>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button id="btn-load-demo" class="btn btn-secondary" title="Load Sample Exam Notes">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Load Demo Notes
+            </button>
+            <button id="btn-toggle-preview-mode" class="btn btn-secondary" title="Toggle Side-by-Side vs Full Canvas">
+                <i class="fa-solid fa-columns"></i> Layout
+            </button>
+            <div class="dropdown-export">
+                <button class="btn btn-primary" id="btn-export-main">
+                    <i class="fa-solid fa-download"></i> Export <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" id="export-menu">
+                    <a href="#" id="export-png"><i class="fa-regular fa-image"></i> Save as PNG Image</a>
+                    <a href="#" id="export-pdf"><i class="fa-regular fa-file-pdf"></i> Save as PDF Document</a>
+                    <a href="#" id="export-print"><i class="fa-solid fa-print"></i> Print Notebook</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="app-workspace">
+        
+        <!-- Left Panel: Controls & Editor -->
+        <aside class="control-panel" id="control-panel">
+            <nav class="panel-tabs">
+                <button class="tab-btn active" data-tab="tab-upload"><i class="fa-solid fa-file-arrow-up"></i> Upload</button>
+                <button class="tab-btn" data-tab="tab-editor"><i class="fa-solid fa-pen-to-square"></i> Live Editor</button>
+                <button class="tab-btn" data-tab="tab-styles"><i class="fa-solid fa-font"></i> Handwriting</button>
+                <button class="tab-btn" data-tab="tab-paper"><i class="fa-solid fa-note-sticky"></i> Paper & Ink</button>
+            </nav>
+
+            <div class="tab-content-wrapper">
+                
+                <!-- TAB 1: FILE UPLOAD -->
+                <section class="tab-pane active" id="tab-upload">
+                    <div class="panel-section">
+                        <h3><i class="fa-solid fa-cloud-arrow-up"></i> Import Document</h3>
+                        <p class="section-desc">Upload your text, Word, PDF, or PowerPoint files to automatically extract and format into handwritten notes.</p>
+                        
+                        <div class="dropzone" id="file-dropzone">
+                            <input type="file" id="file-input" accept=".txt,.md,.docx,.pdf,.pptx,.json" hidden>
+                            <div class="dropzone-icon"><i class="fa-solid fa-file-contract"></i></div>
+                            <h4>Drag & Drop your document here</h4>
+                            <p>Supports <strong>.DOCX, .PDF, .PPTX, .TXT, .MD</strong></p>
+                            <button class="btn btn-outline" onclick="document.getElementById('file-input').click()">
+                                <i class="fa-solid fa-folder-open"></i> Browse Files
+                            </button>
+                        </div>
+                        <div class="parsing-status" id="parsing-status" style="display:none;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> <span id="status-text">Parsing document...</span>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3><i class="fa-solid fa-lightbulb"></i> Quick Templates</h3>
+                        <div class="template-grid">
+                            <button class="template-card" data-template="exam">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                                <span>Exam Revision Notes</span>
+                            </button>
+                            <button class="template-card" data-template="lecture">
+                                <i class="fa-solid fa-chalkboard-user"></i>
+                                <span>Lecture Summary</span>
+                            </button>
+                            <button class="template-card" data-template="formula">
+                                <i class="fa-solid fa-square-root-variable"></i>
+                                <span>Math & Formulas Sheet</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: LIVE EDITOR -->
+                <section class="tab-pane" id="tab-editor">
+                    <div class="panel-section">
+                        <div class="section-header-flex">
+                            <h3><i class="fa-solid fa-code-commit"></i> Markdown & Structured Editor</h3>
+                            <button class="btn-icon" id="btn-clear-editor" title="Clear Editor"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                        
+                        <!-- Toolbar for quick formatting -->
+                        <div class="editor-toolbar">
+                            <button class="tb-btn" data-tag="h1" title="Main Heading (Red Pen)">H1</button>
+                            <button class="tb-btn" data-tag="h2" title="Section Heading (Underlined)">H2</button>
+                            <button class="tb-btn" data-tag="h3" title="Subheading (Green Pen)">H3</button>
+                            <button class="tb-btn" data-tag="bold" title="Bold Text"><i class="fa-solid fa-bold"></i></button>
+                            <button class="tb-btn" data-tag="hl" title="Highlight Yellow"><i class="fa-solid fa-highlighter"></i></button>
+                            <button class="tb-btn" data-tag="box" title="Hand-drawn Box">[Box]</button>
+                            <button class="tb-btn" data-tag="formula" title="Formula Box">[Formula]</button>
+                            <button class="tb-btn" data-tag="diagram" title="Flowchart Diagram">[Flow]</button>
+                            <button class="tb-btn" data-tag="table" title="Hand-drawn Table"><i class="fa-solid fa-table"></i></button>
+                        </div>
+
+                        <textarea id="raw-text-editor" placeholder="Write or paste your markdown notes here..." spellcheck="false"></textarea>
+                        
+                        <div class="editor-footer-info">
+                            <span><i class="fa-solid fa-circle-info"></i> Real-time preview updates automatically as you type.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: HANDWRITING STYLES -->
+                <section class="tab-pane" id="tab-styles">
+                    <div class="panel-section">
+                        <h3><i class="fa-solid fa-signature"></i> Handwriting Font</h3>
+                        <div class="control-group">
+                            <label for="font-family-select">Choose Handwriting Font:</label>
+                            <select id="font-family-select" class="form-control">
+                                <option value="'Kalam', cursive" selected>Kalam (Neat Exam Style)</option>
+                                <option value="'Caveat', cursive">Caveat (Flowing Cursive)</option>
+                                <option value="'Patrick Hand', cursive">Patrick Hand (Clean Printing)</option>
+                                <option value="'Shadows Into Light', cursive">Shadows Into Light (Delicate Cursive)</option>
+                                <option value="'Gochi Hand', cursive">Gochi Hand (Playful Casual)</option>
+                                <option value="'Architects Daughter', cursive">Architects Daughter (Structured Block)</option>
+                                <option value="'Indie Flower', cursive">Indie Flower (Whimsical Handwriting)</option>
+                                <option value="'Caveat Brush', cursive">Caveat Brush (Bold Felt Pen)</option>
+                                <option value="'Permanent Marker', cursive">Permanent Marker (Marker Style)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3><i class="fa-solid fa-sliders"></i> Typography Fine-Tuning</h3>
+                        
+                        <div class="control-group">
+                            <div class="label-val-flex">
+                                <label for="font-size-range">Font Size:</label>
+                                <span class="val-badge" id="val-font-size">19px</span>
+                            </div>
+                            <input type="range" id="font-size-range" min="14" max="28" value="19" step="1">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="label-val-flex">
+                                <label for="line-height-range">Line Spacing:</label>
+                                <span class="val-badge" id="val-line-height">1.6</span>
+                            </div>
+                            <input type="range" id="line-height-range" min="1.1" max="2.4" value="1.6" step="0.1">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="label-val-flex">
+                                <label for="letter-spacing-range">Letter Spacing:</label>
+                                <span class="val-badge" id="val-letter-spacing">0px</span>
+                            </div>
+                            <input type="range" id="letter-spacing-range" min="-1" max="3" value="0" step="0.5">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="label-val-flex">
+                                <label for="baseline-offset-range">Paper Line Baseline Offset:</label>
+                                <span class="val-badge" id="val-baseline-offset">85%</span>
+                            </div>
+                            <input type="range" id="baseline-offset-range" min="50" max="100" value="85" step="1">
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3><i class="fa-solid fa-shuffle"></i> Human Realism & Jitter</h3>
+                        <p class="section-desc">Adds realistic micro-rotations and position shifts to replicate natural human handwriting.</p>
+
+                        <div class="control-group switch-group">
+                            <label for="enable-slant-jitter">Handwriting Slant & Shift Jitter</label>
+                            <input type="checkbox" id="enable-slant-jitter" class="toggle-switch" checked>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="label-val-flex">
+                                <label for="jitter-intensity-range">Jitter Intensity:</label>
+                                <span class="val-badge" id="val-jitter-intensity">Medium</span>
+                            </div>
+                            <input type="range" id="jitter-intensity-range" min="1" max="3" value="2" step="1">
+                        </div>
+
+                        <div class="control-group switch-group">
+                            <label for="enable-ink-bleed">Ink Pressure / Roughness Effect</label>
+                            <input type="checkbox" id="enable-ink-bleed" class="toggle-switch" checked>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 4: PAPER & INK STYLES -->
+                <section class="tab-pane" id="tab-paper">
+                    <div class="panel-section">
+                        <h3><i class="fa-solid fa-palette"></i> Ink Color Palette</h3>
+                        
+                        <div class="control-group">
+                            <label>Preset Color Schemes:</label>
+                            <div class="ink-preset-grid">
+                                <button class="ink-preset-btn active" data-scheme="classic-blue" title="Classic Blue Ink">
+                                    <span class="dot" style="background:#1a1a6b;"></span>
+                                    <span class="dot" style="background:#b30000;"></span>
+                                    <span class="dot" style="background:#006600;"></span>
+                                    <span>Classic Exam</span>
+                                </button>
+                                <button class="ink-preset-btn" data-scheme="midnight" title="Midnight Dark Blue">
+                                    <span class="dot" style="background:#0f2b48;"></span>
+                                    <span class="dot" style="background:#8b0000;"></span>
+                                    <span class="dot" style="background:#2e7d32;"></span>
+                                    <span>Midnight Ink</span>
+                                </button>
+                                <button class="ink-preset-btn" data-scheme="sepia" title="Vintage Fountain">
+                                    <span class="dot" style="background:#3e2723;"></span>
+                                    <span class="dot" style="background:#bf360c;"></span>
+                                    <span class="dot" style="background:#1b5e20;"></span>
+                                    <span>Vintage Fountain</span>
+                                </button>
+                                <button class="ink-preset-btn" data-scheme="charcoal" title="Charcoal Pencil">
+                                    <span class="dot" style="background:#212121;"></span>
+                                    <span class="dot" style="background:#d32f2f;"></span>
+                                    <span class="dot" style="background:#388e3c;"></span>
+                                    <span>Charcoal Graphite</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="custom-ink-pickers">
+                            <div class="picker-item">
+                                <label for="ink-body-color">Body Ink Color:</label>
+                                <input type="color" id="ink-body-color" value="#1a1a6b">
+                            </div>
+                            <div class="picker-item">
+                                <label for="ink-h1-color">Heading 1 (Red Pen):</label>
+                                <input type="color" id="ink-h1-color" value="#b30000">
+                            </div>
+                            <div class="picker-item">
+                                <label for="ink-h3-color">Heading 3 (Green Pen):</label>
+                                <input type="color" id="ink-h3-color" value="#006600">
+                            </div>
+                            <div class="picker-item">
+                                <label for="ink-hl-color">Highlight Color:</label>
+                                <input type="color" id="ink-hl-color" value="#ffff00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3><i class="fa-solid fa-scroll"></i> Paper Type & Pattern</h3>
+                        
+                        <div class="paper-grid">
+                            <label class="paper-card active">
+                                <input type="radio" name="paper-style" value="ruled" checked>
+                                <div class="paper-thumb paper-thumb-ruled"></div>
+                                <span>Single Ruled</span>
+                            </label>
+                            <label class="paper-card">
+                                <input type="radio" name="paper-style" value="grid">
+                                <div class="paper-thumb paper-thumb-grid"></div>
+                                <span>Graph / Grid</span>
+                            </label>
+                            <label class="paper-card">
+                                <input type="radio" name="paper-style" value="dot">
+                                <div class="paper-thumb paper-thumb-dot"></div>
+                                <span>Dot Journal</span>
+                            </label>
+                            <label class="paper-card">
+                                <input type="radio" name="paper-style" value="parchment">
+                                <div class="paper-thumb paper-thumb-parchment"></div>
+                                <span>Vintage Parchment</span>
+                            </label>
+                            <label class="paper-card">
+                                <input type="radio" name="paper-style" value="legal">
+                                <div class="paper-thumb paper-thumb-legal"></div>
+                                <span>Legal Yellow Pad</span>
+                            </label>
+                            <label class="paper-card">
+                                <input type="radio" name="paper-style" value="blank">
+                                <div class="paper-thumb paper-thumb-blank"></div>
+                                <span>Plain Sheet</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="panel-section">
+                        <h3><i class="fa-solid fa-stamp"></i> Paper Decorations</h3>
+
+                        <div class="control-group">
+                            <label for="binder-style-select">Binder Punch Holes:</label>
+                            <select id="binder-style-select" class="form-control">
+                                <option value="left-holes" selected>Left Side 3-Ring Holes</option>
+                                <option value="top-holes">Top Binder Punch</option>
+                                <option value="none">No Holes</option>
+                            </select>
+                        </div>
+
+                        <div class="control-group switch-group">
+                            <label for="enable-margin-line">Show Red Margin Line</label>
+                            <input type="checkbox" id="enable-margin-line" class="toggle-switch" checked>
+                        </div>
+
+                        <div class="control-group switch-group">
+                            <label for="enable-stains">Add Coffee & Ink Stains</label>
+                            <input type="checkbox" id="enable-stains" class="toggle-switch">
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </aside>
+
+        <!-- Right Panel: Live Notebook Canvas Preview -->
+        <section class="preview-panel" id="preview-panel">
+            
+            <!-- Canvas Floating Controls Header -->
+            <div class="canvas-controls-bar">
+                <div class="canvas-title-badge">
+                    <i class="fa-solid fa-book-open"></i> Live Notebook Preview
+                </div>
+
+                <div class="canvas-zoom-controls">
+                    <button class="zoom-btn" id="btn-zoom-out" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+                    <span class="zoom-val" id="val-zoom">100%</span>
+                    <button class="zoom-btn" id="btn-zoom-in" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+                    <button class="zoom-btn" id="btn-zoom-reset" title="Reset Fit"><i class="fa-solid fa-expand"></i></button>
+                </div>
+            </div>
+
+            <!-- Scrollable Page Container -->
+            <div class="notebook-viewport" id="notebook-viewport">
+                <div class="notebook-wrapper" id="notebook-wrapper">
+                    
+                    <!-- THE HANDWRITTEN NOTEBOOK PAGE -->
+                    <article class="notebook-page paper-ruled binder-left-holes" id="notebook-page">
+                        
+                        <!-- Optional Coffee Stain Element -->
+                        <div class="coffee-stain" id="coffee-stain-element" style="display:none;"></div>
+                        
+                        <!-- Content rendered dynamically via JS -->
+                        <div id="notebook-content-target" contenteditable="true" spellcheck="false" title="Click anywhere to edit live on page!">
+                            <!-- Default / Initial Content will be loaded here -->
+                        </div>
+
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- App JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
