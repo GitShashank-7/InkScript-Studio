@@ -2,7 +2,10 @@
 
 > **Turn your Word, PDF, PowerPoint, and text documents into beautiful, customizable handwritten notes.**
 
-![InkScript Studio Demo](https://img.shields.io/badge/Status-Active-brightgreen) ![HTML5](https://img.shields.io/badge/Frontend-HTML5%2FCSS3%2FJS-blue) ![License](https://img.shields.io/badge/License-MIT-purple)
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Open_App-6366f1?style=for-the-badge)](https://gitshashank-7.github.io/InkScript-Studio/)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen) ![HTML5](https://img.shields.io/badge/Frontend-HTML5%2FCSS3%2FJS-blue) ![License](https://img.shields.io/badge/License-MIT-purple)
+
+### 🚀 Live Website: [https://gitshashank-7.github.io/InkScript-Studio/](https://gitshashank-7.github.io/InkScript-Studio/)
 
 **InkScript Studio** is an interactive web application that parses uploaded documents (`.docx`, `.pdf`, `.pptx`, `.txt`, `.md`) and renders them into authentic, customizable handwritten exam and lecture notes. Features real-time editing, human slant/position jitter, adaptive ruled line matching, and high-res PNG/PDF export.
 
@@ -10,6 +13,7 @@
 
 ## 🌟 Key Features
 
+- 🌐 **Try it Live**: Access the application instantly at [https://gitshashank-7.github.io/InkScript-Studio/](https://gitshashank-7.github.io/InkScript-Studio/).
 - 📄 **Multi-Format Document Parsing**: Import `.docx` (via Mammoth.js), `.pdf` (via PDF.js), `.pptx` (via JSZip XML parser), `.txt`, and `.md` files directly in your browser.
 - ✒️ **Realistic Handwriting & Fonts**: 9 Google Handwriting Fonts (`Kalam`, `Caveat`, `Patrick Hand`, `Shadows Into Light`, `Gochi Hand`, `Architects Daughter`, `Indie Flower`, `Caveat Brush`, `Permanent Marker`).
 - 🎲 **Human Realism & Slant Jitter**: Micro-rotations and vertical shifts applied per word for an authentic human handwriting feel.
@@ -20,7 +24,7 @@
 
 ---
 
-## 🚀 Quick Start
+## 💻 Running Locally
 
 ### 1. Clone the Repository
 ```bash
@@ -28,7 +32,7 @@ git clone https://github.com/GitShashank-7/InkScript-Studio.git
 cd InkScript-Studio
 ```
 
-### 2. Run Locally
+### 2. Launch Dev Server
 You can open `index.html` directly in any web browser, or serve it using any HTTP dev server:
 ```bash
 npx http-server . -p 8080
