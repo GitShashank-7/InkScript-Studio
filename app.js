@@ -897,8 +897,18 @@ The same technology that simplifies life by providing more features also increas
     const appWorkspace = document.querySelector('.app-workspace');
 
     if (mBtnControls && mBtnPreview && appWorkspace) {
-        // Default mobile state
-        appWorkspace.classList.add('show-controls');
+        // Only add mobile toggle classes on mobile-sized screens
+        function initMobileState() {
+            if (window.innerWidth <= 900) {
+                if (!appWorkspace.classList.contains('show-controls') && !appWorkspace.classList.contains('show-preview')) {
+                    appWorkspace.classList.add('show-controls');
+                }
+            } else {
+                appWorkspace.classList.remove('show-controls', 'show-preview');
+            }
+        }
+        initMobileState();
+        window.addEventListener('resize', initMobileState);
 
         mBtnControls.addEventListener('click', () => {
             mBtnControls.classList.add('active');

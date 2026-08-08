@@ -28,6 +28,8 @@
     --font-size-base: 19px;
     --line-height-base: 1.6;
     --letter-spacing-base: 0px;
+    --rule-height: calc(var(--font-size-base) * var(--line-height-base));
+    --line-offset-factor: 0.85;
     
     --desk-bg: #475569;
 }
@@ -62,12 +64,14 @@ body {
     padding: 0 20px;
     z-index: 100;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    flex-shrink: 0;
 }
 
 .brand {
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;
 }
 
 .logo-icon {
@@ -81,6 +85,7 @@ body {
     font-size: 20px;
     color: #fff;
     box-shadow: 0 0 15px var(--accent-glow);
+    flex-shrink: 0;
 }
 
 .brand-text h1 {
@@ -88,6 +93,7 @@ body {
     font-weight: 700;
     letter-spacing: -0.3px;
     color: #fff;
+    white-space: nowrap;
 }
 
 .brand-text .badge {
@@ -98,12 +104,14 @@ body {
     padding: 2px 8px;
     border-radius: 12px;
     border: 1px solid rgba(99, 102, 241, 0.3);
+    white-space: nowrap;
 }
 
 .header-actions {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
 }
 
 /* Buttons */
@@ -118,6 +126,7 @@ body {
     align-items: center;
     gap: 8px;
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .btn-primary {
@@ -216,6 +225,7 @@ body {
 .app-workspace {
     flex: 1;
     display: flex;
+    flex-direction: row;
     height: calc(100vh - 60px);
     overflow: hidden;
 }
@@ -223,6 +233,7 @@ body {
 /* Left Sidebar Controls */
 .control-panel {
     width: 420px;
+    flex-shrink: 0;
     background-color: var(--bg-dark-surface);
     border-right: 1px solid var(--border-color);
     display: flex;
@@ -242,6 +253,7 @@ body {
     background-color: var(--bg-dark-base);
     border-bottom: 1px solid var(--border-color);
     padding: 4px 4px 0 4px;
+    flex-shrink: 0;
 }
 
 .tab-btn {
@@ -260,6 +272,7 @@ body {
     align-items: center;
     gap: 5px;
     transition: all 0.2s ease;
+    min-width: 0;
 }
 
 .tab-btn i {
@@ -541,6 +554,7 @@ input[type="range"] {
     cursor: pointer;
     transition: background 0.3s ease;
     border: 1px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .toggle-switch:checked {
@@ -589,6 +603,7 @@ input[type="range"] {
     width: 10px;
     height: 10px;
     border-radius: 50%;
+    flex-shrink: 0;
 }
 
 .ink-preset-btn:hover, .ink-preset-btn.active {
@@ -625,6 +640,7 @@ input[type="range"] {
     border-radius: 50%;
     cursor: pointer;
     background: none;
+    flex-shrink: 0;
 }
 
 /* Paper Grid Selectors */
@@ -693,6 +709,7 @@ input[type="range"] {
     font-size: 11px;
     font-weight: 500;
     color: var(--text-main);
+    text-align: center;
 }
 
 .paper-card.active {
@@ -706,6 +723,7 @@ input[type="range"] {
 
 .preview-panel {
     flex: 1;
+    min-width: 0;
     background-color: var(--desk-bg);
     display: flex;
     flex-direction: column;
@@ -715,6 +733,7 @@ input[type="range"] {
 
 .canvas-controls-bar {
     height: 48px;
+    flex-shrink: 0;
     background-color: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-color);
@@ -810,11 +829,6 @@ input[type="range"] {
 /* ==========================================================================
    THE HANDWRITTEN NOTEBOOK PAGE ENGINE
    ========================================================================== */
-
-:root {
-    --rule-height: calc(var(--font-size-base) * var(--line-height-base));
-    --line-offset-factor: 0.85;
-}
 
 .notebook-page {
     font-family: var(--handwriting-font);
@@ -1038,7 +1052,7 @@ input[type="range"] {
 }
 
 .notebook-page .arrow-down::before {
-    content: '↓';
+    content: '\2193';
     font-size: 24px;
     font-weight: bold;
     margin: 4px 0;
@@ -1047,7 +1061,7 @@ input[type="range"] {
 }
 
 .notebook-page .arrow-up::before {
-    content: '↑';
+    content: '\2191';
     font-size: 24px;
     font-weight: bold;
     margin: 4px 0;
@@ -1093,7 +1107,7 @@ input[type="range"] {
 }
 
 /* ==========================================================================
-   Mobile Switcher Bar & Responsive Devices Engine
+   Mobile Switcher Bar (Hidden on Desktop)
    ========================================================================== */
 
 .mobile-switcher-bar {
@@ -1104,6 +1118,7 @@ input[type="range"] {
     padding: 4px;
     gap: 6px;
     z-index: 95;
+    flex-shrink: 0;
 }
 
 .mobile-switch-btn {
@@ -1128,55 +1143,12 @@ input[type="range"] {
     box-shadow: 0 2px 8px var(--accent-glow);
 }
 
-/* Responsive Grid Adjustments to prevent control overlapping */
-.template-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 8px;
-}
+/* ==========================================================================
+   RESPONSIVE: Tablets & Mobile Screens (<= 900px)
+   ========================================================================== */
 
-.paper-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 8px;
-}
-
-.ink-preset-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 8px;
-}
-
-.custom-ink-pickers {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-}
-
-.picker-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 8px 10px;
-    background-color: var(--bg-dark-card);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.editor-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    background-color: var(--bg-dark-base);
-    padding: 6px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    overflow-x: auto;
-}
-
-/* Media Query: Tablets & Mobile Screens (<= 900px) */
 @media (max-width: 900px) {
+    /* Header */
     .app-header {
         height: 54px;
         padding: 0 12px;
@@ -1199,28 +1171,29 @@ input[type="range"] {
         font-size: 12px;
     }
 
-    #btn-toggle-preview-mode {
-        display: none; /* Mobile uses dedicated switcher bar */
+    #btn-toggle-preview-mode,
+    #btn-load-demo {
+        display: none;
     }
 
+    /* Show mobile switcher bar */
     .mobile-switcher-bar {
         display: flex;
     }
 
+    /* Workspace becomes columnar (stacked) */
     .app-workspace {
-        height: calc(100vh - 100px);
         flex-direction: column;
+        height: calc(100vh - 54px - 46px);
     }
 
-    .control-panel {
-        width: 100%;
-        height: 100%;
-        border-right: none;
-    }
-
+    /* Both panels fill entire space, toggled by show-controls/show-preview */
+    .control-panel,
     .preview-panel {
         width: 100%;
         height: 100%;
+        border-right: none;
+        flex-shrink: 0;
     }
 
     /* Mobile View Toggle States */
@@ -1238,6 +1211,40 @@ input[type="range"] {
 
     .app-workspace.show-preview .preview-panel {
         display: flex;
+        flex-direction: column;
+    }
+
+    /* Grids adapt to available width */
+    .template-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .paper-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ink-preset-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .custom-ink-pickers {
+        grid-template-columns: 1fr;
+    }
+
+    /* Tab bar adjustments */
+    .tab-btn {
+        padding: 10px 4px;
+        font-size: 11px;
+        gap: 3px;
+    }
+
+    .tab-btn i {
+        font-size: 14px;
+    }
+
+    /* Sidebar content padding */
+    .tab-content-wrapper {
+        padding: 16px;
     }
 
     /* Mobile Scrollable Viewport */
@@ -1283,10 +1290,76 @@ input[type="range"] {
         width: 90%;
         margin-bottom: 12px;
     }
+
+    /* Canvas controls adapt */
+    .canvas-controls-bar {
+        height: 42px;
+        padding: 0 12px;
+    }
+
+    .canvas-title-badge {
+        font-size: 12px;
+    }
+
+    /* Editor textarea shorter on mobile */
+    #raw-text-editor {
+        height: 250px;
+    }
+
+    /* Dropzone compact */
+    .dropzone {
+        padding: 20px 16px;
+    }
+
+    .dropzone-icon {
+        font-size: 26px;
+    }
+
+    .dropzone h4 {
+        font-size: 13px;
+    }
 }
 
-/* Media Query: Extra Small Mobile Phones (<= 480px) */
+/* ==========================================================================
+   RESPONSIVE: Extra Small Mobile Phones (<= 480px)
+   ========================================================================== */
+
 @media (max-width: 480px) {
+    .app-header {
+        height: 48px;
+        padding: 0 8px;
+    }
+
+    .brand-text h1 {
+        font-size: 14px;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .brand {
+        gap: 8px;
+    }
+
+    .header-actions {
+        gap: 4px;
+    }
+
+    .btn {
+        padding: 5px 8px;
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    /* Workspace height adjusted for smaller header + switcher */
+    .app-workspace {
+        height: calc(100vh - 48px - 46px);
+    }
+
+    /* Tab bar */
     .panel-tabs {
         padding: 2px;
     }
@@ -1300,6 +1373,24 @@ input[type="range"] {
         font-size: 13px;
     }
 
+    .tab-content-wrapper {
+        padding: 12px;
+    }
+
+    /* Grids to 2-col on tiny screens */
+    .template-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .paper-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ink-preset-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Notebook page compact */
     .notebook-page {
         padding: 30px 12px 40px 42px;
     }
@@ -1312,6 +1403,82 @@ input[type="range"] {
         left: 8px;
         width: 15px;
         height: 15px;
+    }
+
+    /* Mobile switcher bar compact */
+    .mobile-switcher-bar {
+        height: 40px;
+        padding: 3px;
+    }
+
+    .mobile-switch-btn {
+        font-size: 12px;
+        gap: 5px;
+    }
+
+    /* Editor toolbar scrollable */
+    .editor-toolbar {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+
+    #raw-text-editor {
+        height: 200px;
+    }
+
+    /* Switch groups prevent overflow */
+    .switch-group label {
+        font-size: 11px;
+        max-width: calc(100% - 50px);
+    }
+
+    .control-group label {
+        font-size: 11px;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE: Very Small Screens (<= 360px)
+   ========================================================================== */
+
+@media (max-width: 360px) {
+    .app-header {
+        height: 44px;
+    }
+
+    .brand-text h1 {
+        font-size: 13px;
+    }
+
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+
+    .btn {
+        padding: 4px 6px;
+        font-size: 10px;
+    }
+
+    /* Hide export text, show only icon */
+    #btn-export-main .fa-chevron-down {
+        display: none;
+    }
+
+    .app-workspace {
+        height: calc(100vh - 44px - 40px);
+    }
+
+    .template-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .paper-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
     }
 }
 
