@@ -1093,6 +1093,229 @@ input[type="range"] {
 }
 
 /* ==========================================================================
+   Mobile Switcher Bar & Responsive Devices Engine
+   ========================================================================== */
+
+.mobile-switcher-bar {
+    display: none;
+    height: 46px;
+    background-color: var(--bg-dark-surface);
+    border-bottom: 1px solid var(--border-color);
+    padding: 4px;
+    gap: 6px;
+    z-index: 95;
+}
+
+.mobile-switch-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mobile-switch-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+    box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+/* Responsive Grid Adjustments to prevent control overlapping */
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+}
+
+.paper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+}
+
+.ink-preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+}
+
+.custom-ink-pickers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+}
+
+.picker-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    background-color: var(--bg-dark-card);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background-color: var(--bg-dark-base);
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    overflow-x: auto;
+}
+
+/* Media Query: Tablets & Mobile Screens (<= 900px) */
+@media (max-width: 900px) {
+    .app-header {
+        height: 54px;
+        padding: 0 12px;
+    }
+
+    .brand-text h1 {
+        font-size: 15px;
+    }
+
+    .brand-text .badge {
+        display: none;
+    }
+
+    .header-actions {
+        gap: 6px;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    #btn-toggle-preview-mode {
+        display: none; /* Mobile uses dedicated switcher bar */
+    }
+
+    .mobile-switcher-bar {
+        display: flex;
+    }
+
+    .app-workspace {
+        height: calc(100vh - 100px);
+        flex-direction: column;
+    }
+
+    .control-panel {
+        width: 100%;
+        height: 100%;
+        border-right: none;
+    }
+
+    .preview-panel {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Mobile View Toggle States */
+    .app-workspace.show-controls .control-panel {
+        display: flex;
+    }
+
+    .app-workspace.show-controls .preview-panel {
+        display: none;
+    }
+
+    .app-workspace.show-preview .control-panel {
+        display: none;
+    }
+
+    .app-workspace.show-preview .preview-panel {
+        display: flex;
+    }
+
+    /* Mobile Scrollable Viewport */
+    .notebook-viewport {
+        padding: 20px 8px 60px 8px;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
+    }
+
+    .notebook-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .notebook-page {
+        width: 100%;
+        max-width: 100%;
+        min-height: 900px;
+        padding: 40px 20px 50px 55px;
+        font-size: calc(var(--font-size-base) * 0.9);
+    }
+
+    .notebook-page.has-margin::before {
+        left: 45px;
+    }
+
+    .notebook-page.binder-left-holes::after {
+        left: 12px;
+        width: 18px;
+        height: 18px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 
+                    0 800px 0 0 var(--desk-bg), inset 0 802px 4px rgba(0,0,0,0.4),
+                    0 400px 0 0 var(--desk-bg), inset 0 402px 4px rgba(0,0,0,0.4);
+    }
+
+    .diagram-flow {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .diagram-column {
+        width: 90%;
+        margin-bottom: 12px;
+    }
+}
+
+/* Media Query: Extra Small Mobile Phones (<= 480px) */
+@media (max-width: 480px) {
+    .panel-tabs {
+        padding: 2px;
+    }
+
+    .tab-btn {
+        padding: 8px 2px;
+        font-size: 10px;
+    }
+
+    .tab-btn i {
+        font-size: 13px;
+    }
+
+    .notebook-page {
+        padding: 30px 12px 40px 42px;
+    }
+
+    .notebook-page.has-margin::before {
+        left: 35px;
+    }
+
+    .notebook-page.binder-left-holes::after {
+        left: 8px;
+        width: 15px;
+        height: 15px;
+    }
+}
+
+/* ==========================================================================
    Print Stylesheet
    ========================================================================== */
 
@@ -1100,7 +1323,7 @@ input[type="range"] {
     body {
         background-color: #fff !important;
     }
-    .app-header, .control-panel, .canvas-controls-bar {
+    .app-header, .mobile-switcher-bar, .control-panel, .canvas-controls-bar {
         display: none !important;
     }
     .preview-panel {

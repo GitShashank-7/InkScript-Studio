@@ -889,4 +889,30 @@ The same technology that simplifies life by providing more features also increas
         window.print();
     });
 
+    // ==========================================================================
+    // MOBILE SWITCHER ENGINE
+    // ==========================================================================
+    const mBtnControls = document.getElementById('m-btn-controls');
+    const mBtnPreview = document.getElementById('m-btn-preview');
+    const appWorkspace = document.querySelector('.app-workspace');
+
+    if (mBtnControls && mBtnPreview && appWorkspace) {
+        // Default mobile state
+        appWorkspace.classList.add('show-controls');
+
+        mBtnControls.addEventListener('click', () => {
+            mBtnControls.classList.add('active');
+            mBtnPreview.classList.remove('active');
+            appWorkspace.classList.remove('show-preview');
+            appWorkspace.classList.add('show-controls');
+        });
+
+        mBtnPreview.addEventListener('click', () => {
+            mBtnPreview.classList.add('active');
+            mBtnControls.classList.remove('active');
+            appWorkspace.classList.remove('show-controls');
+            appWorkspace.classList.add('show-preview');
+        });
+    }
+
 });
